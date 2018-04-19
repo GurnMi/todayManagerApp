@@ -22,7 +22,6 @@ import com.kakao.util.exception.KakaoException;
 public class SessionCallback implements ISessionCallback {
 
 
-
     // 로그인에 성공한 상태
 
     @Override
@@ -52,7 +51,6 @@ public class SessionCallback implements ISessionCallback {
     public void requestMe() {
 
         // 사용자정보 요청 결과에 대한 Callback
-
 
         UserManagement.requestMe(new MeResponseCallback() {
 
@@ -118,8 +116,6 @@ public class SessionCallback implements ISessionCallback {
 
                 Log.e("Profile : ", id + "");
 
-
-
             }
 
 
@@ -136,23 +132,7 @@ public class SessionCallback implements ISessionCallback {
 
         });
 
-
     }
-
-    /*private void redirectMainActivity(String url, String nickname) {
-        Intent intent = new Intent();
-        intent.setClass( LoginMainActivity.class );
-        intent.putExtra("url", url);
-        intent.putExtra("nickname", nickname);
-        startActivity(intent);
-        finish();
-    }
-    protected void redirectLoginActivity() {
-        final Intent intent = new Intent();
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
-        finish();
-    }*/
 
 
 }
