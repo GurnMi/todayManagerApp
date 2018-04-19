@@ -31,18 +31,11 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
     private Context mContext;
-
-
-
    // private Button btn_custom_login;
-
    // private LoginButton btn_kakao_login;
 
     private com.kakao.usermgmt.LoginButton btnKakao;
     private SessionCallback callback;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +46,11 @@ public class MainActivity extends AppCompatActivity {
         callback = new SessionCallback(); //세션콜백을 부르고
         Session.getCurrentSession().addCallback(callback); //추가
 
-
         btnKakao = (LoginButton) findViewById(R.id.btn_kakao_login);
 
-        /**카카오톡 로그아웃 요청**/
-        //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
-        //테스트 하시기 편하라고 매번 로그아웃 요청을 수행하도록 코드를 넣었습니다 ^^
+            /**카카오톡 로그아웃 요청**/
+            //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
+            //테스트 하시기 편하라고 매번 로그아웃 요청을 수행하도록 코드를 넣었습니다 ^^
        /* UserManagement.requestLogout( new LogoutResponseCallback() {
             @Override
             public void onCompleteLogout() {
@@ -66,29 +58,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-
-
-        //해쉬키 가져오기!!
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.e("MY KEY HASH:",
-                        Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
+            //해쉬키 가져오기!!
+            try {
+                PackageInfo info = getPackageManager().getPackageInfo(
+                        getPackageName(), PackageManager.GET_SIGNATURES);
+                for (Signature signature : info.signatures) {
+                    MessageDigest md = MessageDigest.getInstance("SHA");
+                    md.update(signature.toByteArray());
+                    Log.e("MY KEY HASH:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                }
         } catch (PackageManager.NameNotFoundException e) {
 
         } catch (NoSuchAlgorithmException e) {
 
         }
     }
-
-
-
-
-
-
-
 }
