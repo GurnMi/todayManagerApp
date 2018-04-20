@@ -109,17 +109,21 @@ public class MainActivity extends AppCompatActivity {
         Session.getCurrentSession().removeCallback(callback);
     }
 
+    public void mOnclick(View view) {
+        Intent intent = new Intent();
+        intent.setClass( this, TabHostActivity.class );
+//        Log.e( "email", email);
+        startActivity(intent);
+       // finish();
 
+    }
 
 
     private class SessionCallback implements ISessionCallback {
 
         @Override
         public void onSessionOpened() {
-
             requestMe();
-
-
         }
 
         @Override
@@ -130,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        String userEmail;
-        public String requestMe() {
+
+        public void requestMe() {
 
             UserManagement.requestMe(new MeResponseCallback() {
 
@@ -176,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-            return userEmail;
+
         }
 
 
