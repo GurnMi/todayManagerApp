@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.AutoText;
@@ -26,54 +28,49 @@ import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.lang.reflect.Member;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
-    private Context mContext;
-
-
-
-   // private Button btn_custom_login;
-
-   // private LoginButton btn_kakao_login;
-
     private com.kakao.usermgmt.LoginButton btnKakao;
     private SessionCallback callback;
-
-
-
+    private Handler mHandler;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_main );
-        mContext = getApplicationContext();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        callback = new SessionCallback(); //세션콜백을 부르고
-        Session.getCurrentSession().addCallback(callback); //추가
-        //Session.getCurrentSession().checkAndImplicitOpen();
-
+        callback = new SessionCallback();
+        Session.getCurrentSession().addCallback(callback);
         btnKakao = (LoginButton) findViewById(R.id.btn_kakao_login);
-
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                String result = (String)msg.obj;
+                try{
+                    JSONObject arr = new JSONObject(result);
+                    if(arr.getString("result").equalsIgnoreCase("true")){
+                        Log.d("IF진입","IFIFIFIFIF");
+                        Intent intent = new Intent(MainActivity.this,LoginMainActivity.class);
+                        intent.putExtra("email", email);
+                        startActivity(intent);
+                    }else{
+                        Log.d("ELSE","ELSEELSEELSEELSE");
+                        //회원가입창으로 유도
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
 
         final Intent intent = new Intent(this, MainActivity.class);
-
-
-        /**카카오톡 로그아웃 요청**/
-        //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
-        //테스트 하시기 편하라고 매번 로그아웃 요청을 수행하도록 코드를 넣었습니다 ^^
-      /* UserManagement.requestLogout( new LogoutResponseCallback() {
-            @Override
-            public void onCompleteLogout() {
-                //로그아웃 성공 후 하고싶은 내용 코딩 ~
-
-                startActivity(intent);
-                finish();
-            }
-        });*/
-
-
 
         //해쉬키 가져오기!!
         /*try {
@@ -92,9 +89,6 @@ public class MainActivity extends AppCompatActivity {
         }*/
     }
 
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
@@ -103,95 +97,59 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Session.getCurrentSession().removeCallback(callback);
-    }
-
-
-
-
     private class SessionCallback implements ISessionCallback {
-
         @Override
         public void onSessionOpened() {
-
             requestMe();
-
-
         }
 
         @Override
         public void onSessionOpenFailed(KakaoException exception) {
-            if(exception != null) {
+            if (exception != null) {
                 Logger.e(exception);
             }
         }
 
-
-        String userEmail;
-        public String requestMe() {
-
+        public void requestMe() {
             UserManagement.requestMe(new MeResponseCallback() {
-
                 @Override
                 public void onSuccess(UserProfile userProfile) {
-                    Log.e("SessionCallback :: ", "onSuccess");
-
-                    String nickname = userProfile.getNickname();
-
-                    String email = userProfile.getEmail();
-
-                    String profileImagePath = userProfile.getProfileImagePath();
-
-                    String thumnailPath = userProfile.getThumbnailImagePath();
-
-                    String UUID = userProfile.getUUID();
-
-                    long id = userProfile.getId();
-
-                    Log.e("Profile : ", nickname + "");
-
-                    Log.e("Profile : ", email + "");
-
-                    Log.e("Profile : ", profileImagePath  + "");
-
-                    Log.e("Profile : ", thumnailPath + "");
-
-                    Log.e("Profile : ", UUID + "");
-
-                    Log.e("Profile : ", id + "");
-
+                    email = userProfile.getEmail();
                     redirectSignupActivity(email);
                 }
 
                 @Override
-                public void onSessionClosed(ErrorResult errorResult) {
-
-                }
+                public void onSessionClosed(ErrorResult errorResult) {}
 
                 @Override
-                public void onNotSignedUp() {
-
-                }
+                public void onNotSignedUp() {}
             });
-            return userEmail;
         }
-
-
-
     }
 
     protected void redirectSignupActivity(String email) {
-        final Intent intent = new Intent(this, LoginMainActivity.class);
-        intent.putExtra( "email", email );
-        intent.putExtra( "test", "test" );
-//        Log.e( "email", email);
-        startActivity(intent);
-        finish();
+        String url = "http://192.168.0.9:8080/todayManager/app/user?id=" + email;
+        HttpRequestTask req = new HttpRequestTask(this, mHandler, "GET", email);
+        req.execute(url);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        /**카카오톡 로그아웃 요청**/
+        //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
+        //테스트 하시기 편하라고 매번 로그아웃 요청을 수행하도록 코드를 넣었습니다 ^^
+        UserManagement.requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+                //로그아웃 성공 후 하고싶은 내용 코딩 ~
+                finish();
+            }
+        });
+    }
 }

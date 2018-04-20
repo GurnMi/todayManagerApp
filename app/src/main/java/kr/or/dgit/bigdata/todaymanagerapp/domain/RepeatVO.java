@@ -2,8 +2,6 @@ package kr.or.dgit.bigdata.todaymanagerapp.domain;
 
 import java.util.Date;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 public class RepeatVO {
 	private int rep_no;
 	private String user_id;

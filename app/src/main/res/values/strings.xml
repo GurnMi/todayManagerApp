@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">todayManagerApp</string>
-
-
+    <string name="app_info">
+        간편하게 카카오로그인을 통해\n
+        기능을 사용 할 수 있습니다.
+    </string>
 </resources>
