@@ -62,25 +62,6 @@ public class LoginMainActivity extends AppCompatActivity {
 
     }
 
-   /* private class ParsingXml extends AsyncTask<String, Void, ArrayList<UserVO>> {
-
-        @Override
-        protected ArrayList<UserVO> doInBackground(String... strings) {
-            StringBuffer sb = new StringBuffer();
-            String str = null;
-            try {
-                BufferedReader fis = new BufferedReader(new InputStreamReader(openFileInput(params[0])));
-                while ((str = fis.readLine()) != null) {
-                    sb.append(str);
-                }
-                fis.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-           return parsingXml(sb.toString());
-
-        }
-    }*/
 
 
 
