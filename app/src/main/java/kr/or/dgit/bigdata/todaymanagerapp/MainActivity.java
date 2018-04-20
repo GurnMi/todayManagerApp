@@ -89,6 +89,14 @@ public class MainActivity extends AppCompatActivity {
         }*/
     }
 
+    public void mOnclick(View view) {
+        Intent intent = new Intent();
+        intent.setClass( this, TabHostActivity.class );
+        // Log.e("email", email);
+        startActivity(intent);
+        // finish();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
